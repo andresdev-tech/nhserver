@@ -1,6 +1,6 @@
 {
   "name": "nhserver",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight, modular, and strongly-typed HTTP server framework for Node.js built with TypeScript.",
   "main": "./dist/src/app.js",
   "types": "./dist/src/app.d.ts",
