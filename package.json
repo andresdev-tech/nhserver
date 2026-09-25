@@ -33,6 +33,7 @@
   ],
   "author": "Juan Andres Jaramillo Garcia",
   "license": "MIT",
+  "packageManager": "pnpm@11.21.0",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
