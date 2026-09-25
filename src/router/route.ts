@@ -1,4 +1,4 @@
-import type { http_handler } from "../http/server.js";
+import type { http_handler } from "../http/server.ts";
 
 export type http_method =
     | "GET"

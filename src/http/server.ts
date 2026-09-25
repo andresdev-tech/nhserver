@@ -5,8 +5,8 @@ import {
     type ServerResponse,
 } from "node:http";
 
-import { nh_request } from "./request.js";
-import { nh_response } from "./response.js";
+import { nh_request } from "./request.ts";
+import { nh_response } from "./response.ts";
 
 export type http_handler = (
     request: nh_request,

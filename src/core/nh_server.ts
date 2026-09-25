@@ -1,15 +1,15 @@
 import {
     http_server,
     type http_handler,
-} from "../http/server.js";
+} from "../http/server.ts";
 
 import {
     router,
-} from "../router/router.js";
+} from "../router/router.ts";
 
 import type {
     http_method,
-} from "../router/route.js";
+} from "../router/route.ts";
 
 export type api_mode = "rest";
 

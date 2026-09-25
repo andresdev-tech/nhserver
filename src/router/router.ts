@@ -1,9 +1,9 @@
-import type { http_handler } from "../http/server.js";
+import type { http_handler } from "../http/server.ts";
 
 import {
     route,
     type http_method,
-} from "./route.js";
+} from "./route.ts";
 
 export class router {
     private readonly routes: route[] = [];
