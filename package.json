@@ -1,15 +1,22 @@
 {
   "name": "nhserver",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "A lightweight, modular, and strongly-typed HTTP server framework for Node.js built with TypeScript.",
+  "main": "dist/src/app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "node examples/basic_service.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "server",
+    "http",
+    "rest",
+    "framework",
+    "typescript"
+  ],
+  "author": "Juan Andres Jaramillo Garcia",
+  "license": "MIT",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
