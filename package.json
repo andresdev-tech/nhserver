@@ -2,9 +2,25 @@
   "name": "nhserver",
   "version": "1.0.0",
   "description": "A lightweight, modular, and strongly-typed HTTP server framework for Node.js built with TypeScript.",
-  "main": "dist/src/app.js",
+  "main": "./dist/src/app.js",
+  "types": "./dist/src/app.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/app.d.ts",
+      "import": "./dist/src/app.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "start": "node examples/basic_service.ts"
   },
