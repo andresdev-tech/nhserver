@@ -1,6 +1,10 @@
 {
   "name": "nhserver",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andresdev-tech/nhserver.git"
+  },
   "description": "A lightweight, modular, and strongly-typed HTTP server framework for Node.js built with TypeScript.",
   "main": "./dist/src/app.js",
   "types": "./dist/src/app.d.ts",
