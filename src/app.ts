@@ -50,6 +50,15 @@ export type {
 } from "./parser/query_parser.ts";
 
 export {
+    middleware_pipeline,
+} from "./middleware/pipeline.ts";
+
+export type {
+    http_middleware,
+    next_function,
+} from "./middleware/middleware.ts";
+
+export {
     router,
 } from "./router/router.ts";
 
@@ -77,4 +86,3 @@ export type {
 export type {
     route_match,
 } from "./router/router.ts";
-

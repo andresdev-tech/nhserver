@@ -2,6 +2,13 @@ import { nh_server as nhserver } from "../src/app.ts";
 
 const app = new nhserver("rest");
 
+// Global middleware example
+app.use(async (req, res, next) => {
+    res.set_header("X-Powered-By", "NHSERVER");
+    await next();
+});
+
+
 app.get("/", (_request, response) => {
     response.send(
         "hola desde nhserver :)"
