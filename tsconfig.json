@@ -5,11 +5,15 @@
     "moduleResolution": "NodeNext",
     "rootDir": ".",
     "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
   },
   "include": ["src/**/*.ts", "examples/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist"]

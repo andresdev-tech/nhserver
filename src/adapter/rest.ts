@@ -1,14 +1,15 @@
 import {
     type http_handler,
-} from "../http/server.js";
+} from "../http/server.ts";
 
 import {
     router,
-} from "../router/router.js";
+    type route_match,
+} from "../router/router.ts";
 
 import type {
     http_method,
-} from "../router/route.js";
+} from "../router/route.ts";
 
 export class rest_adapter {
     private readonly router: router;
@@ -35,7 +36,7 @@ export class rest_adapter {
     public find_route(
         method: http_method,
         path: string,
-    ) {
+    ): route_match | undefined {
         return this.router.find_route(
             method,
             path,

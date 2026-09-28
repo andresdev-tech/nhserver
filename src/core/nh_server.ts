@@ -1,15 +1,23 @@
 import {
     http_server,
     type http_handler,
-} from "../http/server.js";
+} from "../http/server.ts";
 
 import {
     router,
-} from "../router/router.js";
+} from "../router/router.ts";
 
 import type {
     http_method,
-} from "../router/route.js";
+} from "../router/route.ts";
+
+import {
+    middleware_pipeline,
+} from "../middleware/pipeline.ts";
+
+import type {
+    http_middleware,
+} from "../middleware/middleware.ts";
 
 export type api_mode = "rest";
 
@@ -17,6 +25,8 @@ export class nh_server {
     private readonly mode: api_mode;
 
     private readonly router: router;
+
+    private readonly pipeline: middleware_pipeline;
 
     private readonly http_server: http_server;
 
@@ -27,36 +37,56 @@ export class nh_server {
 
         this.router = new router();
 
+        this.pipeline = new middleware_pipeline();
+
         this.http_server = new http_server();
 
         this.http_server.set_handler(
             async (request, response) => {
-                const request_method =
-                    request.method.toUpperCase();
-
-                const request_path =
-                    request.url.split("?")[0];
-
-                const route =
-                    this.router.find_route(
-                        request_method as http_method,
-                        request_path,
-                    );
-
-                if (!route) {
-                    response
-                        .status(404)
-                        .send("Not Found");
-
-                    return;
-                }
-
-                await route.handler(
+                await this.pipeline.execute(
                     request,
                     response,
+                    async () => {
+                        const request_method =
+                            request.method.toUpperCase();
+
+                        const request_path =
+                            request.url.split("?")[0];
+
+                        const match_result =
+                            this.router.find_route(
+                                request_method as http_method,
+                                request_path,
+                            );
+
+                        if (!match_result) {
+                            if (!response.ended) {
+                                response
+                                    .status(404)
+                                    .send("Not Found");
+                            }
+
+                            return;
+                        }
+
+                        request.set_params(
+                            match_result.params,
+                        );
+
+                        await match_result.route.handler(
+                            request,
+                            response,
+                        );
+                    },
                 );
             },
         );
+    }
+
+    public use(
+        middleware: http_middleware,
+    ): void {
+        this.pipeline.use(middleware);
     }
 
     public get(

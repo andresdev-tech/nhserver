@@ -1,9 +1,14 @@
-import type { http_handler } from "../http/server.js";
+import type { http_handler } from "../http/server.ts";
 
 import {
     route,
     type http_method,
-} from "./route.js";
+} from "./route.ts";
+
+export interface route_match {
+    route: route;
+    params: Record<string, string>;
+}
 
 export class router {
     private readonly routes: route[] = [];
@@ -25,13 +30,22 @@ export class router {
     public find_route(
         method: http_method,
         path: string,
-    ): route | undefined {
-        return this.routes.find(
-            (current_route) =>
-                current_route.matches(
+    ): route_match | undefined {
+        for (const current_route of this.routes) {
+            const match_result =
+                current_route.match(
                     method,
                     path,
-                ),
-        );
+                );
+
+            if (match_result.matched) {
+                return {
+                    route: current_route,
+                    params: match_result.params,
+                };
+            }
+        }
+
+        return undefined;
     }
 }

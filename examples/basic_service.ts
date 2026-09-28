@@ -1,26 +1,52 @@
-import { nh_server } from "../src/app.js";
+import { nh_server as nhserver } from "../src/app.ts";
 
-const app = new nh_server("rest");
+const app = new nhserver("rest");
 
-app.get("/", (_req, res) => {
+// Global middleware example
+app.use(async (req, res, next) => {
+    res.set_header("X-Powered-By", "NHSERVER");
+    await next();
+});
+
+
+app.get("/", (_request, response) => {
+    response.send(
+        "hola desde nhserver :)"
+    );
+});
+
+app.get("/user", (req, res) => {
     res.json({
-        message: "NHSERVER is running",
-        version: "1.0.0",
+        "name": "andrew",
+        "age": 20
     });
 });
 
-app.get("/health", (_req, res) => {
-    res.status(200).send("OK");
-});
+app.post("/user", async (req, res) => {
+    const data = await req.json<{ name: string; age: number }>();
 
-app.post("/users", (_req, res) => {
     res.status(201).json({
-        id: 1,
-        name: "Developer",
+        message: "User created successfully",
+        received: data,
     });
 });
 
-const PORT = 3000;
+app.get("/search", (req, res) => {
+    res.json({
+        query: req.query,
+    });
+});
 
-await app.listen(PORT);
-console.log(`Server listening on http://localhost:${PORT}`);
+app.get("/user/:id", (req, res) => {
+    res.json({
+        user_id: req.params.id,
+        status: "found",
+    });
+});
+
+
+
+await app.listen(1899);
+
+console.log("Sever running on http://localhost:1899");
+
