@@ -5,6 +5,7 @@ import {
     type ServerResponse,
 } from "node:http";
 
+import { http_error } from "./errors.ts";
 import { nh_request } from "./request.ts";
 import { nh_response } from "./response.ts";
 
@@ -138,8 +139,20 @@ export class http_server {
                 request_instance,
                 response_instance,
             );
-        } catch {
+        } catch (error: unknown) {
             if (!response_instance.ended) {
+                if (error instanceof http_error) {
+                    response_instance
+                        .status(error.status_code)
+                        .json({
+                            error: error.message,
+                            status_code:
+                                error.status_code,
+                        });
+
+                    return;
+                }
+
                 response_instance
                     .status(500)
                     .json({

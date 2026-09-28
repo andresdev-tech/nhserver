@@ -4,6 +4,7 @@ import {
 
 import {
     router,
+    type route_match,
 } from "../router/router.ts";
 
 import type {
@@ -35,7 +36,7 @@ export class rest_adapter {
     public find_route(
         method: http_method,
         path: string,
-    ) {
+    ): route_match | undefined {
         return this.router.find_route(
             method,
             path,
