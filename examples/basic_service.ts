@@ -30,6 +30,14 @@ app.get("/search", (req, res) => {
     });
 });
 
+app.get("/user/:id", (req, res) => {
+    res.json({
+        user_id: req.params.id,
+        status: "found",
+    });
+});
+
+
 
 await app.listen(1899);
 

@@ -18,6 +18,7 @@ export class nh_request {
     public readonly url: string;
     public readonly headers: IncomingHttpHeaders;
     public readonly query: query_params;
+    public params: Record<string, string> = {};
 
     private readonly raw_request: IncomingMessage;
     private readonly reader: body_reader;
@@ -29,6 +30,12 @@ export class nh_request {
         this.query = parse_query(this.url);
         this.raw_request = request;
         this.reader = new body_reader(request);
+    }
+
+    public set_params(
+        params: Record<string, string>,
+    ): void {
+        this.params = params;
     }
 
     public get raw(): IncomingMessage {

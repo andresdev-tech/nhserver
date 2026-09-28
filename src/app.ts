@@ -71,4 +71,10 @@ export type {
 
 export type {
     http_method,
-} from "./router/route.ts";
+    route_match_result,
+} from "./router/route.ts";
+
+export type {
+    route_match,
+} from "./router/router.ts";
+

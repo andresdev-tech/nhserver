@@ -37,13 +37,13 @@ export class nh_server {
                 const request_path =
                     request.url.split("?")[0];
 
-                const route =
+                const match_result =
                     this.router.find_route(
                         request_method as http_method,
                         request_path,
                     );
 
-                if (!route) {
+                if (!match_result) {
                     response
                         .status(404)
                         .send("Not Found");
@@ -51,7 +51,11 @@ export class nh_server {
                     return;
                 }
 
-                await route.handler(
+                request.set_params(
+                    match_result.params,
+                );
+
+                await match_result.route.handler(
                     request,
                     response,
                 );
