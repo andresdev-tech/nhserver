@@ -12,9 +12,10 @@ describe("rest_adapter", () => {
         const matched = adapter.find_route("GET", "/api/v1/users");
 
         expect(matched).toBeDefined();
-        expect(matched?.method).toBe("GET");
-        expect(matched?.path).toBe("/api/v1/users");
-        expect(matched?.handler).toBe(handler);
+        expect(matched?.route.method).toBe("GET");
+        expect(matched?.route.path).toBe("/api/v1/users");
+        expect(matched?.route.handler).toBe(handler);
+        expect(matched?.params).toEqual({});
     });
 
     it("should return undefined for unmatched routes", () => {

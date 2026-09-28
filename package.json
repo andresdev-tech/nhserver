@@ -26,6 +26,8 @@
     "build": "tsc",
     "prepublishOnly": "pnpm run build",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "node examples/basic_service.ts"
   },
   "keywords": [

@@ -31,4 +31,27 @@ describe("route", () => {
 
         expect(test_route.matches("GET", "/api/other")).toBe(false);
     });
+
+    it("should match dynamic routes and extract parameter values", () => {
+        const handler = vi.fn();
+        const test_route = new route("GET", "/users/:id/posts/:slug", handler);
+
+        const result = test_route.match("GET", "/users/42/posts/hello-world");
+        expect(result.matched).toBe(true);
+        expect(result.params).toEqual({
+            id: "42",
+            slug: "hello-world",
+        });
+    });
+
+    it("should correctly decode percent-encoded dynamic parameters", () => {
+        const handler = vi.fn();
+        const test_route = new route("GET", "/search/:term", handler);
+
+        const result = test_route.match("GET", "/search/hello%20world");
+        expect(result.matched).toBe(true);
+        expect(result.params).toEqual({
+            term: "hello world",
+        });
+    });
 });

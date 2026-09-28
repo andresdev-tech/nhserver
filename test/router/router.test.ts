@@ -10,9 +10,10 @@ describe("router", () => {
         const found = test_router.find_route("GET", "/test");
 
         expect(found).toBeDefined();
-        expect(found?.method).toBe("GET");
-        expect(found?.path).toBe("/test");
-        expect(found?.handler).toBe(handler);
+        expect(found?.route.method).toBe("GET");
+        expect(found?.route.path).toBe("/test");
+        expect(found?.route.handler).toBe(handler);
+        expect(found?.params).toEqual({});
     });
 
     it("should return undefined when no route matches", () => {
@@ -33,8 +34,20 @@ describe("router", () => {
         test_router.add_route("POST", "/items", post_handler);
         test_router.add_route("GET", "/users", users_handler);
 
-        expect(test_router.find_route("GET", "/items")?.handler).toBe(get_handler);
-        expect(test_router.find_route("POST", "/items")?.handler).toBe(post_handler);
-        expect(test_router.find_route("GET", "/users")?.handler).toBe(users_handler);
+        expect(test_router.find_route("GET", "/items")?.route.handler).toBe(get_handler);
+        expect(test_router.find_route("POST", "/items")?.route.handler).toBe(post_handler);
+        expect(test_router.find_route("GET", "/users")?.route.handler).toBe(users_handler);
+    });
+
+    it("should find and extract params from dynamic routes", () => {
+        const test_router = new router();
+        const user_handler = vi.fn();
+
+        test_router.add_route("GET", "/users/:id", user_handler);
+
+        const match = test_router.find_route("GET", "/users/123");
+        expect(match).toBeDefined();
+        expect(match?.route.handler).toBe(user_handler);
+        expect(match?.params).toEqual({ id: "123" });
     });
 });

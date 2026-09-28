@@ -83,12 +83,12 @@ describe("nh_server", () => {
             expect(app.is_running).toBe(false);
         });
 
-        it("should correctly handle query parameters by ignoring them in route matching", async () => {
+        it("should correctly handle structured query parameters", async () => {
             const app = new nh_server("rest");
             const port = 46002;
 
             app.get("/search", (req, res) => {
-                res.json({ url: req.url });
+                res.json({ query: req.query });
             });
 
             await app.listen(port);
@@ -99,8 +99,117 @@ describe("nh_server", () => {
             expect(response.status).toBe(200);
             const body = await response.json();
             expect(body).toEqual({
-                url: "/search?keyword=vitest&page=1",
+                query: { keyword: "vitest", page: "1" },
             });
+
+            await app.close();
+        });
+
+        it("should handle dynamic path parameters", async () => {
+            const app = new nh_server("rest");
+            const port = 46005;
+
+            app.get("/users/:userId/books/:bookId", (req, res) => {
+                res.json({
+                    userId: req.params.userId,
+                    bookId: req.params.bookId,
+                });
+            });
+
+            await app.listen(port);
+
+            const response = await fetch(
+                `http://127.0.0.1:${port}/users/u123/books/b456`,
+            );
+            expect(response.status).toBe(200);
+            expect(await response.json()).toEqual({
+                userId: "u123",
+                bookId: "b456",
+            });
+
+            await app.close();
+        });
+
+        it("should parse incoming request JSON body", async () => {
+            const app = new nh_server("rest");
+            const port = 46006;
+
+            app.post("/api/user", async (req, res) => {
+                const data = await req.json<{ username: string }>();
+                res.status(201).json({ created: data.username });
+            });
+
+            await app.listen(port);
+
+            const response = await fetch(`http://127.0.0.1:${port}/api/user`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: "andres" }),
+            });
+            expect(response.status).toBe(201);
+            expect(await response.json()).toEqual({ created: "andres" });
+
+            await app.close();
+        });
+
+        it("should return 400 Bad Request when JSON body is malformed", async () => {
+            const app = new nh_server("rest");
+            const port = 46007;
+
+            app.post("/api/user", async (req, res) => {
+                await req.json();
+                res.send("OK");
+            });
+
+            await app.listen(port);
+
+            const response = await fetch(`http://127.0.0.1:${port}/api/user`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: '{"invalid": json',
+            });
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({
+                error: "Invalid JSON payload.",
+                status_code: 400,
+            });
+
+            await app.close();
+        });
+
+        it("should execute global middleware pipeline", async () => {
+            const app = new nh_server("rest");
+            const port = 46008;
+
+            app.use(async (req, res, next) => {
+                res.set_header("X-Framework", "NHSERVER");
+                if (req.url === "/blocked") {
+                    res.status(403).json({ error: "Access Denied" });
+                    return;
+                }
+                await next();
+            });
+
+            app.get("/allowed", (_req, res) => {
+                res.json({ access: "granted" });
+            });
+
+            app.get("/blocked", (_req, res) => {
+                res.json({ access: "should_not_reach" });
+            });
+
+            await app.listen(port);
+
+            // Allowed
+            const r_allowed = await fetch(`http://127.0.0.1:${port}/allowed`);
+            expect(r_allowed.status).toBe(200);
+            expect(r_allowed.headers.get("x-framework")).toBe("NHSERVER");
+            expect(await r_allowed.json()).toEqual({ access: "granted" });
+
+            // Blocked by middleware
+            const r_blocked = await fetch(`http://127.0.0.1:${port}/blocked`);
+            expect(r_blocked.status).toBe(403);
+            expect(await r_blocked.json()).toEqual({ error: "Access Denied" });
 
             await app.close();
         });
