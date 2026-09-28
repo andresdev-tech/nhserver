@@ -42,6 +42,14 @@ export {
 } from "./parser/parser.ts";
 
 export {
+    parse_query,
+} from "./parser/query_parser.ts";
+
+export type {
+    query_params,
+} from "./parser/query_parser.ts";
+
+export {
     router,
 } from "./router/router.ts";
 

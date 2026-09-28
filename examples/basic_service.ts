@@ -24,6 +24,13 @@ app.post("/user", async (req, res) => {
     });
 });
 
+app.get("/search", (req, res) => {
+    res.json({
+        query: req.query,
+    });
+});
+
+
 await app.listen(1899);
 
 console.log("Sever running on http://localhost:1899");
